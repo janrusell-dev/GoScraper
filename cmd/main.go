@@ -10,10 +10,12 @@ import (
 
 func main() {
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", handlers.AvailableHandler)
 	router.HandleFunc("GET /health", handlers.HealthCheckHandler)
 	router.HandleFunc("POST /scrape/books", handlers.BookScrapeHandler)
 	router.HandleFunc("GET /scraped/books", handlers.ScrapedBooksHandler)
+	router.HandleFunc("POST /scrape/course", handlers.CourseHandler)
+	router.HandleFunc("GET /scraped/course", handlers.ScrapedCourseHandler)
+	router.HandleFunc("GET /available", handlers.AvailableHandler)
 
 	server := http.Server{
 		Addr:    ":8080",

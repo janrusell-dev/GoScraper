@@ -1,12 +1,12 @@
 package dto
 
-type BookRequestDTO struct {
+type BookScrapeRequest struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
 	ISBN   string `json:"isbn"`
 }
 
-type BookResponseDTO struct {
+type BookScrapeResponse struct {
 	Title       string `json:"title"`
 	Author      string `json:"author"`
 	ISBN        string `json:"isbn"`

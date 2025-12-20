@@ -7,3 +7,7 @@ import (
 func ScrapedBooksHandler(w http.ResponseWriter, r *http.Request) {
 
 }
+
+func ScrapedCourseHandler(w http.ResponseWriter, r *http.Request) {
+
+}
