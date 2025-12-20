@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// scraper.CourseraScraper()
 	router := http.NewServeMux()
 	router.HandleFunc("GET /", handlers.AvailableHandler)
 	router.HandleFunc("GET /health", handlers.HealthCheckHandler)
