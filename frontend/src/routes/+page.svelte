@@ -1,76 +1,107 @@
 <script lang="ts">
-    import { fade } from "svelte/transition"
+  import { writable } from "svelte/store";
 
-    type DropdownAction = "Wikipedia" | "Duplicate" | "Delete";
+  let categories = ["All Books", "Travel", "Mystery", "Historical Fiction"];
+  let selectedCategory = "All Books";
+  let page = 1;
+  let format = "json"; // json or csv
+  let loading = writable(false);
+  let books = writable<any[]>([]);
 
-    let isOpen: boolean = false;
-    
-    function toggleDropdown(){
-        isOpen = !isOpen;
+  async function scrapeBooks() {
+    loading.set(true);
+    books.set([]);
+
+    const payload = {
+      page: Number(page),
+      category: selectedCategory === "All Books" ? "" : selectedCategory,
+      format
+    };
+
+    try {
+      const res = await fetch("http://localhost:8080/scrape/books", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Failed to scrape books");
+
+      if (format === "json") {
+        const data = await res.json();
+        books.set(data);
+      } else if (format === "csv") {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "books.csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error scraping books. See console.");
+    } finally {
+      loading.set(false);
     }
-
-    function handleAction(action: DropdownAction){
-        isOpen = false
-    }
-
-    function closeDropdown(e: MouseEvent){
-        const target = e.target as HTMLElement;
-        if (isOpen && !target.closest(".dropdown-container")){
-            isOpen = false
-        }
-    }
+  }
 </script>
-<svelte:window on:click={closeDropdown}/>
 
-<div class="text-center p-20">
-  <h1 class="text-3xl mb-4 font-bold">Scraper</h1>
-  
-  <div class="relative inline-block text-left dropdown-container">
-    <button 
-      on:click={toggleDropdown}
-      type="button" 
-      class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      aria-expanded={isOpen}
-      aria-haspopup="true"
-    >
-      Options
-      <svg 
-        class="-mr-1 ml-2 h-5 w-5 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" 
-        fill="currentColor" 
-        viewBox="0 0 20 20"
-      >
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-      </svg>
+<div class="p-8">
+  <h1 class="text-3xl mb-6 font-bold">Book Scraper</h1>
+
+  <div class="mb-4 space-x-4">
+    <select bind:value={selectedCategory} class="border px-2 py-1">
+      {#each categories as cat}
+        <option value={cat}>{cat}</option>
+      {/each}
+    </select>
+
+    <input type="number" min="1" bind:value={page} class="border px-2 py-1 w-20" placeholder="Page" />
+
+    <select bind:value={format} class="border px-2 py-1">
+      <option value="json">JSON</option>
+      <option value="csv">CSV</option>
+    </select>
+
+    <button on:click={scrapeBooks} class="bg-blue-500 text-white px-4 py-1 rounded">
+      Scrape
     </button>
-
-    {#if isOpen}
-      <div 
-        transition:fade={{ duration: 100 }}
-        class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none z-10"
-      >
-        <div class="py-1">
-          <button 
-            on:click={() => handleAction('Wikipedia')}
-            class="w-full text-left group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Wikipedia
-          </button>
-          <button 
-            on:click={() => handleAction('Duplicate')}
-            class="w-full text-left group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Duplicate
-          </button>
-        </div>
-        <div class="py-1">
-          <button 
-            on:click={() => handleAction('Delete')}
-            class="w-full text-left group flex items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    {/if}
   </div>
+
+  {#if $loading}
+    <p class="text-gray-500">Scraping books, please wait...</p>
+  {/if}
+
+  {#if $books.length > 0 && format === "json"}
+    <table class="border-collapse border border-gray-300 w-full mt-4">
+      <thead>
+        <tr>
+          <th class="border px-2 py-1">Title</th>
+          <th class="border px-2 py-1">Price</th>
+          <th class="border px-2 py-1">Rating</th>
+          <th class="border px-2 py-1">URL</th>
+          <th class="border px-2 py-1">ImageURL</th>
+          <th class="border px-2 py-1">In Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each $books as book}
+          <tr>
+            <td class="border px-2 py-1">{book.title}</td>
+            <td class="border px-2 py-1">{book.price}</td>
+            <td class="border px-2 py-1">{book.ratings}</td>
+             <td class="border px-2 py-1 underline"><a href="{book.url}" target="_blank">
+              {book.url}
+            </a>
+          </td>
+            <td class="border px-2 py-1 underline"><img src="{book.image_url}" alt="{book.title}"
+              loading="lazy" decoding="async" class="object-cover h-full w-full"/></td>
+            <td class="border px-2 py-1">{book.in_stock ? "In Stock" : " Out of Stock"}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
 </div>
