@@ -1,4 +1,5 @@
 coursera_cache/
+book_cache/
 .vscode/
 bin/
 .env

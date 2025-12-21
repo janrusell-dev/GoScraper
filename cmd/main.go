@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/janrusell-dev/goscraper/internal/handlers"
+	"github.com/janrusell-dev/goscraper/internal/middleware"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: middleware.CorsMiddleware(router),
 	}
 	fmt.Println("Server running at http://localhost:8080")
 	if err := server.ListenAndServe(); err != nil {

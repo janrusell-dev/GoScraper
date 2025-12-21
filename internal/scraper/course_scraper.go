@@ -8,19 +8,8 @@ import (
 	"time"
 
 	"github.com/gocolly/colly/v2"
+	"github.com/janrusell-dev/goscraper/internal/models"
 )
-
-type Course struct {
-	Title       string
-	Description string
-	Creator     string
-	Level       string
-	URL         string
-	Language    string
-	Commitment  string
-	Rating      string
-	Type        string
-}
 
 func CourseraScraper() {
 	fname := "json/coursera.json"
@@ -46,7 +35,7 @@ func CourseraScraper() {
 		"back-end", "generative ai", "golang", "fastapi", "rust",
 	}
 
-	courses := make([]Course, 0, 200)
+	courses := make([]models.Course, 0, 200)
 
 	c.OnHTML("a[href]", func(h *colly.HTMLElement) {
 		if h.Attr("class") == "Button_1qxkboh-o_O-primary_cv02ee-o_O-md_28awn8-o_O-primaryLink_109aggg" {
@@ -84,7 +73,7 @@ func CourseraScraper() {
 		if title == "" {
 			log.Println("No title found", h.Request.URL)
 		}
-		course := Course{
+		course := models.Course{
 			Title:       title,
 			URL:         h.Request.URL.String(),
 			Description: h.ChildText("div.content"),
