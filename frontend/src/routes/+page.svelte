@@ -49,7 +49,7 @@
 </script>
 
 <div class="p-8">
-  <h1 class="text-3xl mb-6 font-bold">Book Scraper</h1>
+  <h1 class="text-3xl mb-6 font-bold">Scraper</h1>
 
   <div class="mb-4 space-x-4">
     <select bind:value={selectedCategory} class="border px-2 py-1">
