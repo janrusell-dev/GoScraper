@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -13,12 +14,20 @@ import (
 func BookScraper(page int) ([]models.Book, error) {
 	var books []models.Book
 
+	var mu sync.Mutex
+
 	c := colly.NewCollector(
 		colly.AllowedDomains("books.toscrape.com"),
 		colly.CacheDir("./book_cache"),
 		colly.CacheExpiration(24*time.Hour),
 		colly.Async(true),
 	)
+
+	c.Limit(&colly.LimitRule{
+		DomainGlob:  "*",
+		Parallelism: 4,
+		Delay:       1 * time.Second,
+	})
 
 	c.OnHTML(".product_pod", func(h *colly.HTMLElement) {
 		ratingClass := h.ChildAttr(".star-rating", "class")
@@ -35,7 +44,10 @@ func BookScraper(page int) ([]models.Book, error) {
 			URL:      h.Request.AbsoluteURL(h.ChildAttr("h3 a", "href")),
 			ImageURL: h.Request.AbsoluteURL(h.ChildAttr("img", "src")),
 		}
+
+		mu.Lock()
 		books = append(books, book)
+		mu.Unlock()
 	})
 
 	url := fmt.Sprintf("https://books.toscrape.com/catalogue/page-%d.html", page)
