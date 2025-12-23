@@ -24,10 +24,11 @@ func main() {
 	router.Handle("GET /scraped/course", scrapeStack(http.HandlerFunc(handlers.ScrapedCourseHandler)))
 	router.Handle("GET /available", scrapeStack(http.HandlerFunc(handlers.AvailableHandler)))
 
-	v1 := http.NewServeMux()
-	v1.Handle("/v1/", http.StripPrefix("/v1", router))
+	// v1 := http.NewServeMux()
+	// v1.Handle("/v1/", http.StripPrefix("/v1", router))
 	stack := middleware.CreateStack(
 		middleware.CorsMiddleware,
+		middleware.Logging,
 	)
 
 	server := http.Server{

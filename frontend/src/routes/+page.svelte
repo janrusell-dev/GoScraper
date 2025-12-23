@@ -96,8 +96,8 @@
               {book.url}
             </a>
           </td>
-            <td class="border px-2 py-1 underline"><img src="{book.image_url}" alt="{book.title}"
-              loading="lazy" decoding="async" class="object-cover h-full w-full"/></td>
+            <td class="border px-2 py- underline"><img src="{book.image_url}" alt="{book.title}"
+              class="object-contain h-full w-full"/></td>
             <td class="border px-2 py-1">{book.in_stock ? "In Stock" : " Out of Stock"}</td>
           </tr>
         {/each}
