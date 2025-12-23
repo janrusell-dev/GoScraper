@@ -8,6 +8,21 @@ import (
 	"github.com/janrusell-dev/goscraper/internal/dto"
 )
 
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	response := dto.IndexResponse{
+		Name:    "GoScraper",
+		Version: "1.0.0",
+		Endpoints: map[string]string{
+			"books":  "/v1/scrape/books",
+			"course": "/v1/scrape/course",
+		},
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

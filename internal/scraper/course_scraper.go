@@ -1,9 +1,7 @@
 package scraper
 
 import (
-	"encoding/json"
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -12,13 +10,6 @@ import (
 )
 
 func CourseraScraper() {
-	fname := "json/coursera.json"
-	file, err := os.Create(fname)
-	if err != nil {
-		log.Fatalf("Cannot create file %q: %s\n", fname, err)
-		return
-	}
-	defer file.Close()
 
 	c := colly.NewCollector(
 		colly.AllowedDomains("coursera.org", "www.coursera.org"),
@@ -98,11 +89,6 @@ func CourseraScraper() {
 	})
 
 	c.Visit("https://coursera.org/browse/computer-science")
-
-	enc := json.NewEncoder(file)
-	enc.SetIndent("", " ")
-
-	enc.Encode(courses)
 
 }
 
