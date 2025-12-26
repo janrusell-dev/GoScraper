@@ -11,9 +11,8 @@ import (
 	"github.com/janrusell-dev/goscraper/internal/models"
 )
 
-func BookScraper(page int) ([]models.Book, error) {
+func BookScraper(category string, page int) ([]models.Book, error) {
 	var books []models.Book
-
 	var mu sync.Mutex
 
 	c := colly.NewCollector(
@@ -50,9 +49,20 @@ func BookScraper(page int) ([]models.Book, error) {
 		mu.Unlock()
 	})
 
-	url := fmt.Sprintf("https://books.toscrape.com/catalogue/page-%d.html", page)
-	log.Printf("Visiting url: %s", url)
-	if err := c.Visit(url); err != nil {
+	var targetURL string
+
+	if strings.ToLower(category) == "all" || category == "" {
+		targetURL = fmt.Sprintf("https://books.toscrape.com/catalogue/page-%d.html", page)
+	} else {
+		pageSegment := "index.html"
+
+		if page > 1 {
+			pageSegment = fmt.Sprintf("page-%d.html", page)
+		}
+		targetURL = fmt.Sprintf("https://books.toscrape.com/catalogue/category/books/%s/%s", category, pageSegment)
+	}
+	log.Printf("Visiting url: %s", targetURL)
+	if err := c.Visit(targetURL); err != nil {
 		return nil, err
 	}
 
