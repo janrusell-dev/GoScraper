@@ -15,7 +15,7 @@ func BookScrapeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	books, err := scraper.BookScraper(req.Page)
+	books, err := scraper.BookScraper(req.Category, req.Page)
 	if err != nil {
 		http.Error(w, "Failed to scrape books", http.StatusInternalServerError)
 		return

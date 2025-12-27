@@ -23,6 +23,7 @@ func main() {
 	router.Handle("POST /scrape/course", scrapeStack(http.HandlerFunc(handlers.CourseHandler)))
 	router.Handle("GET /scraped/course", scrapeStack(http.HandlerFunc(handlers.ScrapedCourseHandler)))
 	router.Handle("GET /available", scrapeStack(http.HandlerFunc(handlers.AvailableHandler)))
+	router.Handle("GET /books/categories", scrapeStack(http.HandlerFunc(handlers.CategoriesHandler)))
 
 	// v1 := http.NewServeMux()
 	// v1.Handle("/v1/", http.StripPrefix("/v1", router))
