@@ -49,9 +49,10 @@ func BookScraper(category string, page int) ([]models.Book, error) {
 		mu.Unlock()
 	})
 
+	slug := GetSlug(category)
 	var targetURL string
 
-	if strings.ToLower(category) == "all" || category == "" {
+	if slug == "" {
 		targetURL = fmt.Sprintf("https://books.toscrape.com/catalogue/page-%d.html", page)
 	} else {
 		pageSegment := "index.html"
@@ -59,7 +60,7 @@ func BookScraper(category string, page int) ([]models.Book, error) {
 		if page > 1 {
 			pageSegment = fmt.Sprintf("page-%d.html", page)
 		}
-		targetURL = fmt.Sprintf("https://books.toscrape.com/catalogue/category/books/%s/%s", category, pageSegment)
+		targetURL = fmt.Sprintf("https://books.toscrape.com/catalogue/category/books/%s/%s", slug, pageSegment)
 	}
 	log.Printf("Visiting url: %s", targetURL)
 	if err := c.Visit(targetURL); err != nil {
