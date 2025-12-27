@@ -12,7 +12,7 @@ import (
 )
 
 func BookScraper(category string, page int) ([]models.Book, error) {
-	var books []models.Book
+	books := make([]models.Book, 0)
 	var mu sync.Mutex
 
 	c := colly.NewCollector(
