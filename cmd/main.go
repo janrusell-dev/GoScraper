@@ -25,8 +25,8 @@ func main() {
 	router.Handle("GET /available", scrapeStack(http.HandlerFunc(handlers.AvailableHandler)))
 	router.Handle("GET /books/categories", scrapeStack(http.HandlerFunc(handlers.CategoriesHandler)))
 
-	// v1 := http.NewServeMux()
-	// v1.Handle("/v1/", http.StripPrefix("/v1", router))
+	v1 := http.NewServeMux()
+	v1.Handle("/v1/", http.StripPrefix("/v1", router))
 	stack := middleware.CreateStack(
 		middleware.CorsMiddleware,
 		middleware.Logging,
@@ -34,7 +34,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: stack(router),
+		Handler: stack(v1),
 	}
 	fmt.Println("Server running at http://localhost:8080")
 	if err := server.ListenAndServe(); err != nil {
