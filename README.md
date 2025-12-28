@@ -1,86 +1,87 @@
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+<a id="readme-top"></a>
+
+<details> <summary>Table of Contents</summary> <ol> <li> <a href="#about-the-project">About The Project</a> <ul> <li><a href="#built-with">Built With</a></li> </ul> </li> <li> <a href="#getting-started">Getting Started</a> <ul> <li><a href="#prerequisites">Prerequisites</a></li> <li><a href="#installation">Installation</a></li> </ul> </li> <li><a href="#usage">Usage</a></li></ol> </details>
 
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+GoScraper is a modular full-stack utility designed for automated data extraction and local storage. It consists of a high-concurrency Go service that handles the heavy lifting of crawling and parsing, paired with a Next.js interface for controlling scrape parameters and handling browser-side data exports.
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+The project was built to experiment with Go's colly framework and to implement a clean bridge between a Go-based API and a TypeScript-based frontend.
 
-Here's why:
+Core Technical Specs:
+The Backend: A Go REST API using colly for asynchronous scraping, sync.Mutex for thread-safe data collection, and built-in caching to prevent redundant network requests.
 
-- Your time should be focused on creating something amazing. A project that solves a problem and helps others
-- You shouldn't be doing the same tasks over and over like creating a README from scratch
-- You should implement DRY principles to the rest of your life :smile:
+The Frontend: A Next.js (App Router) client-side dashboard that manages scraper state, pagination, and category selection.
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
+Data Layer: Implements a strict "contract" between Go Structs and TypeScript Interfaces to ensure consistent data structures.
 
-Use the `BLANK_README.md` to get started.
+Export Engine: A custom utility layer in the frontend that transforms raw JSON responses into downloadable .json and .csv blobs without requiring server-side storage.
+
+Why this structure?
+Most scrapers are either simple scripts or complex apps with heavy databases. GoScraper sits in the middle:
+
+Go provides the speed and concurrent visitors.
+
+Next.js provides an immediate way to visualize the data before saving.
+
+Client-Side Export keeps the backend stateless and fast—no need to manage file systems or cloud storage for the results.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
-- [![JQuery][JQuery.com]][JQuery-url]
+[![Next][Next.js]][Next-url] [![Go][Go-badge]][Go-url] [![Tailwind][Tailwind-badge]][Tailwind-url] [![TypeScript][TS-badge]][TS-url]
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Getting Started
 
+To get a local copy up and running, follow these simple steps. Since this project is a monorepo (or split between frontend/backend), you will need both the Go runtime and Node.js environment.
+
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+- Go (Version 1.20 or higher) Download Go
 
-- npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- Node.js & npm (LTS Version) Download Node
 
 ### Installation
 
-Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services.\_
+1. Clone the repo
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = "ENTER YOUR API";
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
-   ```
+```sh
+git clone  git clone https://github.com/janrusell-dev/goscraper.git
+```
+
+2. Backend Setup
+
+```sh
+go mod tidy
+go run cmd/main.go
+```
+
+The server should now be running at http://localhost:8080
+
+3. Frontend Setup
+   Install NPM packages
+
+```sh
+cd frontend
+npm install
+```
+
+4. Env Configuration Create a .env file in /frontend
+
+```sh
+NEXT_PUBLIC_API_URL=http://yourapihost
+```
+
+5. Start frontend
+
+```sh
+npm run dev
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -88,41 +89,24 @@ Below is an example of how you can instruct your audience on installing and sett
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+1. Select Category: Use the dropdown to filter specific data types.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+2. Set Page: Define the pagination depth for the scraper.
+
+3. Run: Click RUN SCRAPER to see real-time JSON results in the preview window.
+
+4. Export: Click DOWNLOAD .JSON or DOWNLOAD .CSV to save the results to your local machine.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com
+[Go-badge]: https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white
+[Go-url]: https://golang.org/
+[Tailwind-badge]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
+[TS-badge]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TS-url]: https://www.typescriptlang.org/
